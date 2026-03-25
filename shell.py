@@ -179,6 +179,8 @@ class VaultShell:
   encrypt <path>    Encrypt a directory tree in-place
   cd <name>         Navigate into a directory (type the ORIGINAL name)
   cd ..             Go up one directory
+  touch <name>      Create an empty encrypted file with the given name
+  mkdir <name>      Create a new subdirectory (type the ORIGINAL name)
   open <name>       Decrypt & open a file (type the ORIGINAL name)
   ls                List hashed entries in current directory
   pwd               Show current directory path
