@@ -25,9 +25,11 @@ Fallback: if liboqs is unavailable, the module falls back to AES-256-GCM + scryp
 """
 
 import os
+import sys
 import hmac
 import hashlib
 import secrets
+import ctypes
 import struct
 from pathlib import Path
 
@@ -53,6 +55,11 @@ SCRYPT_N        = 2**17
 SCRYPT_R        = 8
 SCRYPT_P        = 1
 
+def _hide_file(path: Path) -> None:
+    """Mark *path* as hidden. On Unix this is a no-op as .enc.salt is already hidden via dot prefix."""
+    if sys.platform == "win32":
+        ctypes.windll.kernel32.SetFileAttributesW(str(path), 0x02) # FILE_ATTRIBUTE_HIDDEN
+
 # Name hashing
 def load_or_create_salt(directory: Path) -> bytes:
     """Return (or create) the 64-byte name-hashing salt for *directory*."""
@@ -63,6 +70,7 @@ def load_or_create_salt(directory: Path) -> bytes:
             return data
     salt = secrets.token_bytes(64)
     p.write_bytes(salt)
+    _hide_file(p)
     return salt
 
 def hash_name(name: str, salt: bytes) -> str:
